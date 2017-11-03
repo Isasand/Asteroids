@@ -16,10 +16,9 @@ class Astreoid(Polygon):
             self.position = position
             self.rotation = rotation
             self.pull = pull
-            self.angular_velocity = angular_velocity# 0.2
+            self.angular_velocity = angular_velocity
             self.size = size
             self.sound = pygame.mixer.Sound("explosion.wav")
-            #self.accelerate(0.9)
         
         def explode(self):
             self.sound.play()

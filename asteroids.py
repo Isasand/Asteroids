@@ -4,7 +4,6 @@ import pygame
 from pygame.locals import *
 import math
 
-
 from game import Game
 from Ship import Ship
 from Ship import Bullet
@@ -52,7 +51,6 @@ class Asteroids( Game ):
                     self.bullets.clear()
                     self.bullets.append(Bullet(self.ship.position,self.ship.rotation))
             
-    
     def calc_distance(self,p, q):
         return math.sqrt((p.x-q.x)**2 + (p.y-q.y)**2)
     

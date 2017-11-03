@@ -15,10 +15,9 @@ pygame.mixer.init()
 class Ship(Polygon):
     
     def __init__(self):
-        points=[ Point(0,0), Point(-10,10), Point(15,0), Point(-10,-10) ]
+        points = [ Point(0,0), Point(-10,10), Point(15,0), Point(-10,-10) ]
         self.points = list(points)
-        position = Point(10,200)
-        self.position = position
+        self.position = Point(10,200)
         self.rotation = 0
         self.pull = Point(0,0)
         self.angular_velocity = 0.0
@@ -31,8 +30,7 @@ class Ship(Polygon):
         
     def shoot(self):
         self.sound.play()
-    #def shoot
-
+        
 class Bullet(Circle):
     
     def __init__(self, position, rotation):
