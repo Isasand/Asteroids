@@ -2,9 +2,7 @@ import sys
 import random
 import pygame
 from pygame.locals import *
-
 import math
-import random
 
 
 from game import Game
@@ -20,9 +18,7 @@ class Asteroids( Game ):
     def __init__(self, name, width, height):
         super().__init__( name, width, height )
         pygame.init()
-        pygame.mixer.init()
-        sound= pygame.mixer.Sound("shoot.wav")
-        self.ship = Ship(sound)
+        self.ship = Ship()
         self.asteroids= []
         self.stars=[]
         self.bullets = []
@@ -55,7 +51,7 @@ class Asteroids( Game ):
                 else:
                     self.bullets.clear()
                     self.bullets.append(Bullet(self.ship.position,self.ship.rotation))
-            # TODO: should create a bullet when the user fires
+            
     
     def calc_distance(self,p, q):
         return math.sqrt((p.x-q.x)**2 + (p.y-q.y)**2)
@@ -100,16 +96,18 @@ class Asteroids( Game ):
                     else:
                         points= [ Point(0,40), Point(40,0), Point(50,30), Point(30,50) ]
                         
-                    self.asteroids.append(Astreoid(points, x, y, 
+                    self.asteroids.append(Astreoid(points, 
+                                                   x, y, 
                                                    rotation,
                                                    Point(point_x, point_y), 
-                                                   angular_velocity, size))
+                                                   angular_velocity, 
+                                                   size))
                     self.new_level = False
                     
     def show_lifebar(self):
         myfont=pygame.font.SysFont("Britannic Bold", 40)
         nlabel=myfont.render(self.lifebar+str(self.ship.life), 1, (255, 128, 0))
-        self.screen.blit(nlabel,(10,400))
+        self.screen.blit(nlabel,(5,450))
                 
               
     def life_check(self):
@@ -138,7 +136,6 @@ class Asteroids( Game ):
         if len(self.asteroids) ==0:
             if self.current_level == 5:  
                 self.screen.blit(self.background_image, [0, 0])
-                #self.screen.fill(black)
                 myfont=pygame.font.SysFont("Britannic Bold", 40)
                 nlabel=myfont.render("YOU WIN!", 1, (255, 128, 0))
                 self.screen.blit(nlabel,(220,100))
@@ -147,7 +144,6 @@ class Asteroids( Game ):
                         break
             else:
                 self.screen.blit(self.background_image, [0, 0])
-                #self.screen.fill(black)
                 myfont=pygame.font.SysFont("Britannic Bold", 40)
                 nlabel=myfont.render("YOU MADE IT TO THE NEXT LEVEL!", 1, (255, 128, 0))
                 nlabel1=myfont.render("CLICK TO CONTINUE!", 1, (255, 128, 0))
@@ -171,7 +167,6 @@ class Asteroids( Game ):
         while (start==False):
             
             self.screen.blit(self.background_image, [0, 0])
-            #self.screen.fill(black)
             myfont=pygame.font.SysFont("Britannic Bold", 40)
             nlabel=myfont.render("WELCOME", 1, (128, 128, 128))
             nlabel1=myfont.render("TO ASTEROIDS", 1, (128, 128, 128))
@@ -185,11 +180,11 @@ class Asteroids( Game ):
             pygame.display.flip()
     
     def print_score_and_level(self):
-         myfont=pygame.font.SysFont("Arial", 20)
-         nlabel=myfont.render("Score:" + str(self.score), 1, (255, 204, 229))
-         nlabel1=myfont.render("Level:" + str(self.current_level), 1, (255, 204, 229))
+         myfont=pygame.font.SysFont("Britannic Bold", 20)
+         nlabel=myfont.render("Score:" + str(self.score), 1, (128, 120, 120))
+         nlabel1=myfont.render("Level:" + str(self.current_level), 1, (128, 120, 120))
          self.screen.blit(nlabel,(10,10))
-         self.screen.blit(nlabel1, (10, 40))
+         self.screen.blit(nlabel1, (10, 25))
          
     def update_simulation(self):
         
@@ -236,14 +231,3 @@ class Asteroids( Game ):
         for bullet in self.bullets:
             bullet.draw( self.screen )
 
-
-    def handle_collisions(self):
-        """
-        handle_collisions() should check:
-            - if our ship has crashed into an asteroid (the ship gets destroyed - game over!)
-            - if a bullet has hit an asteroid (the asteroid gets destroyed)
-        :return: 
-        """
-        # TODO: implement collission detection,
-        #       using the collission detection methods in all of the shapes
-        pass

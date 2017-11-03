@@ -10,9 +10,11 @@ from circle import Circle
 import random
 import pygame
 
+pygame.mixer.init()
+
 class Ship(Polygon):
     
-    def __init__(self, sound):
+    def __init__(self):
         points=[ Point(0,0), Point(-10,10), Point(15,0), Point(-10,-10) ]
         self.points = list(points)
         position = Point(10,200)
@@ -21,7 +23,7 @@ class Ship(Polygon):
         self.pull = Point(0,0)
         self.angular_velocity = 0.0
         self.life = 5
-        self.sound = sound
+        self.sound = pygame.mixer.Sound("shoot.wav")
 
 
     def collide(self):
