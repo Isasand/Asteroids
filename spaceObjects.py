@@ -9,6 +9,7 @@ import pygame
 import random 
 from point import Point 
 
+from polygon import Polygon
 class Bullet(Circle):
     
     def __init__(self, position, rotation):
@@ -44,3 +45,21 @@ class Sprites (pygame.sprite.Sprite):
         self.image.fill(color)
         
         self.rect = self.image.get.rect()
+
+class Alien(Polygon):
+    
+    def __init__(self):
+        points = [ Point(10,10), Point(30,10), Point(50,10), Point(10,10), Point(20,2), 
+                  Point(40,2), Point(50,10), Point(40,20), Point(30,20), Point(40,20), 
+                  Point(37,30), Point(30,30), Point(23,30), Point(20,20), Point(30,20),
+                  Point(20,20)]
+        self.points = list(points)
+        self.position = Point(200,200)
+        self.rotation = 180
+        self.pull = Point(0.02,0.02)
+        self.angular_velocity = 0
+        self.sound = pygame.mixer.Sound("AlienSound.wav")
+        #self.accelerate(1)
+        
+    def appear(self):
+        self.sound.play()

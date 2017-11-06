@@ -5,11 +5,12 @@ from pygame.locals import *
 import math
 from game import Game
 from Ship import Ship
-from Ship import Bullet
+from spaceObjects import Bullet
 from astreoid import Astreoid
 from point import Point
-from Ship import Star
-              
+from spaceObjects import Star
+from spaceObjects import Alien
+
 class Asteroids( Game ):
     """
     Asteroids extends the base class Game to provide logic for the specifics of the game
@@ -30,7 +31,7 @@ class Asteroids( Game ):
         self.lifebar= "[][][][][]"
         self.timer = 0
         self.explosions=set([])
-    
+        self.alien =[]
         
     def handle_input(self):
         super().handle_input()
@@ -53,6 +54,36 @@ class Asteroids( Game ):
                     self.bullets.clear()
                     self.bullets.append(Bullet(self.ship.position,self.ship.rotation))
     
+    def restart_game(self):
+        self.ship = Ship()
+        self.asteroids= []
+        self.stars=[]
+        self.bullets = []
+        self.score = 0
+        self.screen = pygame.display.set_mode((self.width, self.height))
+        self.background_image =pygame.image.load("skyy.jpg").convert()
+        self.max_num_asteroids = 5
+        self.current_level = 1
+        self.new_level = True
+        self.lifebar= "[][][][][]"
+        self.timer = 0
+        self.explosions=set([])
+        self.alien =[]
+    
+    def empty_screen(self):
+        self.new_Level = False
+        # Render all the stars, if any:
+        for star in self.stars:
+            self.stars.remove(star)
+        # Render all the asteroids, if any:
+        for asteroid in self.asteroids:
+            self.asteroids.remove(asteroid)
+        # Render all the bullet, if any:
+        for bullet in self.bullets:
+            self.bullets.remove(bullet)
+        for alien in self.alien:
+            self.alien.remove(alien)
+        
     def calc_distance(self,p, q):
         return math.sqrt((p.x-q.x)**2 + (p.y-q.y)**2)
     
@@ -90,7 +121,9 @@ class Asteroids( Game ):
                     self.lifebar = self.lifebar[:-2]
                     
     
-    
+    def CreateAlien(self):
+        self.alien.append(Alien())
+        
     def CreateAsteroid(self, pos, size):
         if pos == "random" :
             x = random.randint(0,600)
@@ -104,11 +137,11 @@ class Asteroids( Game ):
         point_y = random.uniform(-0.001,0.5)
         angular_velocity = random.uniform(0.1, 0.8)
         if size == "medium":
-            points= [ Point(10,30), Point(30,10), Point(40,30), Point(30,40) ]
+            points= [ Point(10,30), Point(20,1), Point(30,10), Point(40,30), Point(30,40), Point(15,40)]
         elif size == "small":
-            points= [ Point(10,20), Point(20,10), Point(30,20), Point(20,30) ]
+            points= [ Point(10,20), Point(12,12),Point(20,10), Point(28,12),Point(30,20), Point(28,30),Point(20,30)]
         else:
-            points= [ Point(0,40), Point(40,0), Point(50,30), Point(30,50) ]
+            points= [ Point(0,40), Point(0,10),Point(10,0),Point(40,0), Point(50,30), Point(30,50)]
         return Astreoid(points, x, y, rotation,Point(point_x, point_y), angular_velocity,size)
             
                                         
@@ -128,18 +161,27 @@ class Asteroids( Game ):
     def show_lifebar(self):
         myfont=pygame.font.SysFont("Britannic Bold", 40)
         nlabel=myfont.render(self.lifebar+str(self.ship.life), 1, (255, 128, 0))
-        self.screen.blit(nlabel,(5,450))
+        if not self.ship.life == 0:
+            self.screen.blit(nlabel,(5,450))
                 
               
     def life_check(self):
         if self.ship.life == 0:
-             self.screen.blit(self.background_image, [0, 0])
-             myfont=pygame.font.SysFont("Britannic Bold", 40)
-             nlabel=myfont.render("YOU DIE!", 1, (255, 128, 0))
-             self.screen.blit(nlabel,(220,100))
-             for event in pygame.event.get():
-                 if event.type==MOUSEBUTTONDOWN:
-                     break
+            self.empty_screen()
+            myfont=pygame.font.SysFont("Britannic Bold", 40)
+            
+            gameover = myfont.render("Gameover!", 1, (255, 255, 255))
+            respawn = myfont.render("Press R to Respawn",1, (255,255,255))
+            self.screen.blit(gameover,(200,200))
+            self.screen.blit(respawn,(160,250))
+            #self.screen.blit(self.background_image, [0, 0])
+            #myfont=pygame.font.SysFont("Britannic Bold", 40)
+            #nlabel=myfont.render("Game over!", 1, (255, 128, 0))
+            #self.screen.blit(nlabel,(220,100))
+            #for event in pygame.event.get():
+             #   if event.type==MOUSEBUTTONDOWN:
+              #      self.restart_game()
+               #     break
         
     def check_max_asteroids(self):
         if self.current_level == 1:
@@ -154,8 +196,13 @@ class Asteroids( Game ):
             self.max_num_asteroids = 20
             
     def check_victory(self):
-        if len(self.asteroids) ==0:
-            if self.current_level == 5:  
+        if len(self.asteroids) ==0 and not self.ship.life == 0:
+            if self.current_level == 5:
+                boss = False 
+                if not boss:
+                    CreateAlien()
+                    boss = True
+                
                 self.screen.blit(self.background_image, [0, 0])
                 myfont=pygame.font.SysFont("Britannic Bold", 40)
                 nlabel=myfont.render("YOU WIN!", 1, (255, 128, 0))
@@ -209,13 +256,14 @@ class Asteroids( Game ):
          
     def update_simulation(self):
         
+        """
+        update_simulation() causes all objects in the game to update themselves
+        """
+            
         black=(0,0,0)
         self.screen.fill(black)
         self.spawn_stars()
         self.spawn_asteroids()
-        """
-        update_simulation() causes all objects in the game to update themselves
-        """
         super().update_simulation()
         self.collision_detect()
         self.check_victory()
@@ -230,8 +278,14 @@ class Asteroids( Game ):
             star.update( self.width, self.height )
         for bullets in self.bullets:
             bullets.update( self.width, self.height)
-        # TODO: should probably call update on our bullet/bullets here
-        # TODO: should probably work out how to remove a bullet when it gets old
+        for alien in self.alien:
+            alien.update(self.width, self.height)
+        
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                keys_pressed = pygame.key.get_pressed()
+                if keys_pressed[K_r] and self.ship.life == 0:
+                    self.restart_game()
         
         
     def render_objects(self):
@@ -251,4 +305,6 @@ class Asteroids( Game ):
         # Render all the bullet, if any:
         for bullet in self.bullets:
             bullet.draw( self.screen )
+        for alien in self.alien:
+            alien.draw(self.screen)
 
