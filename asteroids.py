@@ -10,14 +10,16 @@ from astreoid import Astreoid
 from point import Point
 from spaceObjects import Star
 from spaceObjects import Alien
+from button import Button
 
+pygame.init()
 class Asteroids( Game ):
     """
     Asteroids extends the base class Game to provide logic for the specifics of the game
     """
     def __init__(self, name, width, height):
         super().__init__( name, width, height )
-        pygame.init()
+        
         self.ship = Ship()
         self.asteroids= []
         self.stars=[]
@@ -30,12 +32,15 @@ class Asteroids( Game ):
         self.new_level = True
         self.lifebar= "[][][][][]"
         self.timer = 0
-        self.explosions=set([])
         self.alien =[]
+        self.state = "startmenu"
+        self.buttons = []
         
     def handle_input(self):
         super().handle_input()
         keys_pressed = pygame.key.get_pressed()
+        if keys_pressed[K_r] and self.ship.life == 0:
+           self.restart_game()
         if keys_pressed[K_LEFT] and self.ship:
             self.ship.rotate(-0.5)
         if keys_pressed[K_RIGHT] and self.ship:
@@ -44,6 +49,10 @@ class Asteroids( Game ):
             self.ship.accelerate(0.0009)
         if keys_pressed[K_DOWN] and self.ship:
             self.ship.accelerate(0)
+        if keys_pressed[K_p] and self.state == "running":
+            self.state = "paused" 
+        if keys_pressed[K_s] and self.state == "paused":
+            self.state = "running"
         if keys_pressed[K_SPACE] and self.ship:
             if pygame.time.get_ticks() > self.timer:
                 self.timer = pygame.time.get_ticks() + 300
@@ -53,7 +62,12 @@ class Asteroids( Game ):
                 else:
                     self.bullets.clear()
                     self.bullets.append(Bullet(self.ship.position,self.ship.rotation))
+        
     
+    def paused(self):
+        pause_text = pygame.font.SysFont('Consolas', 32).render('Paused', True, pygame.color.Color('White'))
+        self.screen.blit(pause_text,(240,240))
+        
     def restart_game(self):
         self.ship = Ship()
         self.asteroids= []
@@ -69,6 +83,7 @@ class Asteroids( Game ):
         self.timer = 0
         self.explosions=set([])
         self.alien =[]
+        self.state = "running"
     
     def empty_screen(self):
         self.new_Level = False
@@ -169,19 +184,11 @@ class Asteroids( Game ):
         if self.ship.life == 0:
             self.empty_screen()
             myfont=pygame.font.SysFont("Britannic Bold", 40)
-            
+            self.screen.blit(self.background_image, [0, 0])
             gameover = myfont.render("Gameover!", 1, (255, 255, 255))
             respawn = myfont.render("Press R to Respawn",1, (255,255,255))
-            self.screen.blit(gameover,(200,200))
+            self.screen.blit(gameover,(210,200))
             self.screen.blit(respawn,(160,250))
-            #self.screen.blit(self.background_image, [0, 0])
-            #myfont=pygame.font.SysFont("Britannic Bold", 40)
-            #nlabel=myfont.render("Game over!", 1, (255, 128, 0))
-            #self.screen.blit(nlabel,(220,100))
-            #for event in pygame.event.get():
-             #   if event.type==MOUSEBUTTONDOWN:
-              #      self.restart_game()
-               #     break
         
     def check_max_asteroids(self):
         if self.current_level == 1:
@@ -213,8 +220,8 @@ class Asteroids( Game ):
             else:
                 self.screen.blit(self.background_image, [0, 0])
                 myfont=pygame.font.SysFont("Britannic Bold", 40)
-                nlabel=myfont.render("YOU MADE IT TO THE NEXT LEVEL!", 1, (255, 128, 0))
-                nlabel1=myfont.render("CLICK TO CONTINUE!", 1, (255, 128, 0))
+                nlabel=myfont.render("YOU MADE IT TO THE NEXT LEVEL!", 1, (255, 255, 255))
+                nlabel1=myfont.render("CLICK TO CONTINUE!", 1, (255,255,255))
                 self.screen.blit(nlabel,(30,100))
                 self.screen.blit(nlabel1,(30,140))
                 for event in pygame.event.get():
@@ -226,26 +233,8 @@ class Asteroids( Game ):
     def spawn_stars(self):
         if self.new_level:
             self.stars.clear()
-        if len(self.stars)<100:
+        if len(self.stars)<100 and not self.ship.life ==0:
             self.stars.append(Star())
-            
-        
-    def start_screen(self):
-        start=False
-        while (start==False):
-            
-            self.screen.blit(self.background_image, [0, 0])
-            myfont=pygame.font.SysFont("Britannic Bold", 40)
-            nlabel=myfont.render("WELCOME", 1, (128, 128, 128))
-            nlabel1=myfont.render("TO ASTEROIDS", 1, (128, 128, 128))
-            nlabel2=myfont.render("CLICK TO START", 1, (128,128,128))
-            for event in pygame.event.get():
-                if event.type==MOUSEBUTTONDOWN:
-                    start=True
-            self.screen.blit(nlabel,(220,100))
-            self.screen.blit(nlabel1, (195,150))
-            self.screen.blit(nlabel2, (185, 200))
-            pygame.display.flip()
     
     def print_score_and_level(self):
          myfont=pygame.font.SysFont("Britannic Bold", 20)
@@ -253,40 +242,74 @@ class Asteroids( Game ):
          nlabel1=myfont.render("Level:" + str(self.current_level), 1, (128, 120, 120))
          self.screen.blit(nlabel,(10,10))
          self.screen.blit(nlabel1, (10, 25))
-         
+      
+    def start_menu(self):
+        self.screen.blit(self.background_image, [0, 0])
+        myfont=pygame.font.SysFont("Britannic Bold", 40)
+        nlabel=myfont.render("WELCOME", 1, (255, 255, 255))
+        nlabel1=myfont.render("TO ASTEROIDS", 1, (255,255, 255))
+        self.screen.blit(nlabel,(230,100))
+        self.screen.blit(nlabel1, (195,150))
+        #pygame.display.flip()
+        start = Button((170, 200, 80,30), 'START')
+        self.buttons.append(start)
+        options  = Button((260, 200, 80,30), 'OPTIONS')
+        self.buttons.append(options)
+        bquit  = Button((350, 200, 80,30), 'QUIT')
+        self.buttons.append(bquit)
+        for b in self.buttons:
+            b.draw(self.screen)
+            
+           
+        
+                
     def update_simulation(self):
         
         """
         update_simulation() causes all objects in the game to update themselves
         """
             
-        black=(0,0,0)
-        self.screen.fill(black)
-        self.spawn_stars()
-        self.spawn_asteroids()
+        
         super().update_simulation()
-        self.collision_detect()
-        self.check_victory()
-        self.print_score_and_level()
-        self.show_lifebar()
-        self.life_check()
-        if self.ship:
-            self.ship.update( self.width, self.height )
-        for asteroid in self.asteroids:
-            asteroid.update( self.width, self.height )
-        for star in self.stars:
-            star.update( self.width, self.height )
-        for bullets in self.bullets:
-            bullets.update( self.width, self.height)
-        for alien in self.alien:
-            alien.update(self.width, self.height)
-        
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                keys_pressed = pygame.key.get_pressed()
-                if keys_pressed[K_r] and self.ship.life == 0:
-                    self.restart_game()
-        
+        if self.state== "running":
+            black=(0,0,0)
+            self.screen.fill(black)
+            self.spawn_stars()
+            self.spawn_asteroids()
+            self.collision_detect()
+            self.check_victory()
+            self.print_score_and_level()
+            self.show_lifebar()
+            self.life_check()
+            if self.ship:
+                self.ship.update( self.width, self.height )
+            for asteroid in self.asteroids:
+                asteroid.update( self.width, self.height )
+            for star in self.stars:
+                star.update( self.width, self.height )
+            for bullets in self.bullets:
+                bullets.update( self.width, self.height)
+            for alien in self.alien:
+                alien.update(self.width, self.height)
+        elif self.state == "paused":
+            self.paused()
+        elif self.state == "startmenu":
+            
+            
+            for alien in self.alien:
+                alien.update(self.width, self.height)
+                
+            self.start_menu()
+            for event in pygame.event.get():
+                for button in self.buttons:
+                    if 'click' in button.handleEvent(event):
+                        if button._propGetCaption() == "QUIT":
+                            self.running= False
+                        if button._propGetCaption() == "START":
+                            self.state = "running"
+                        if button._propGetCaption() == "OPTIONS":
+                            pass
+                            
         
     def render_objects(self):
         """

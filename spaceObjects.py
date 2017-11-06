@@ -48,18 +48,21 @@ class Sprites (pygame.sprite.Sprite):
 
 class Alien(Polygon):
     
-    def __init__(self):
+    def __init__(self, pos = Point(200,200)):
         points = [ Point(10,10), Point(30,10), Point(50,10), Point(10,10), Point(20,2), 
                   Point(40,2), Point(50,10), Point(40,20), Point(30,20), Point(40,20), 
                   Point(37,30), Point(30,30), Point(23,30), Point(20,20), Point(30,20),
                   Point(20,20)]
         self.points = list(points)
-        self.position = Point(200,200)
+        self.position = pos
         self.rotation = 180
-        self.pull = Point(0.02,0.02)
+        self.pull = Point(0,0)
         self.angular_velocity = 0
         self.sound = pygame.mixer.Sound("AlienSound.wav")
         #self.accelerate(1)
         
     def appear(self):
         self.sound.play()
+        
+    def move_around(self):
+        self.accelerate(0.2)

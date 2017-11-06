@@ -15,7 +15,7 @@ class Ship(Polygon):
     def __init__(self):
         points = [ Point(0,0), Point(-10,10), Point(15,0), Point(-10,-10) ]
         self.points = list(points)
-        self.position = Point(10,200)
+        self.position = Point(50,250)
         self.rotation = 0
         self.pull = Point(0,0)
         self.angular_velocity = 0.0
