@@ -1,36 +1,14 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Nov  1 12:41:23 2017
+Created on Mon Nov  6 11:58:33 2017
 
 @author: Isa
 """
-from polygon import Polygon
-from point import Point
 from circle import Circle
-import random
 import pygame
+import random 
+from point import Point 
 
-pygame.mixer.init()
-
-class Ship(Polygon):
-    
-    def __init__(self):
-        points = [ Point(0,0), Point(-10,10), Point(15,0), Point(-10,-10) ]
-        self.points = list(points)
-        self.position = Point(10,200)
-        self.rotation = 0
-        self.pull = Point(0,0)
-        self.angular_velocity = 0.0
-        self.life = 5
-        self.sound = pygame.mixer.Sound("shoot.wav")
-
-
-    def collide(self):
-        self.life -= 1 
-        
-    def shoot(self):
-        self.sound.play()
-        
 class Bullet(Circle):
     
     def __init__(self, position, rotation):
@@ -54,7 +32,9 @@ class Star(Circle):
         self.radius = 2
         self.linewidth = 1
         self.accelerate(0)
-        
+    
+    
+#TODO add sprites 
 class Sprites (pygame.sprite.Sprite):
     
     def __init__(self, color, width, height):
@@ -63,4 +43,4 @@ class Sprites (pygame.sprite.Sprite):
         self.image = pygame.Surface([width, height])
         self.image.fill(color)
         
-        self.rect = self.image.get,rect()
+        self.rect = self.image.get.rect()

@@ -60,9 +60,3 @@ class Game( ABC ):
     def render_objects(self):
         pass
 
-
-
-
-
-
-
