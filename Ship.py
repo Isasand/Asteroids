@@ -1,14 +1,29 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Nov  1 12:41:23 2017
+Gruppuppgift: Asteroids - Objektorienterad Programmering
+Nackademin IOT 17
 
-@author: Isa
+Medverkande:
+Isa Sand
+Felix Edenborgh
+Christopher Bryant
+
+Stomme källkod:
+Mark Dixon
 """
+
 from polygon import Polygon
 from point import Point
-import pygame
+from circle import Circle
 
-pygame.mixer.init()
+import pygame 
+
+LIGHTBLUE = (0,255,255)
+BLACK = (0,0,0)
+myfont = 'Consolas'
+RED = (204, 0, 0)
+GREEN = (0, 255, 0)
+pygame.init()
 
 class Ship(Polygon):
     
@@ -20,12 +35,47 @@ class Ship(Polygon):
         self.pull = Point(0,0)
         self.angular_velocity = 0.0
         self.life = 5
-        self.sound = pygame.mixer.Sound("shoot.wav")
-
+        self.shield = Shield(self.rotation, self.pull, self.angular_velocity)
+        self.shield_activated = False
+        self.lifebar = "{}".format("♥") * self.life
+        self.bullets = []
 
     def collide(self):
-        self.life -= 1 
+        if not self.shield_activated:
+            self.life -= 1 
+        else:
+            if self.shield.health <= 0:
+                self.shield_activated = False
+                return
+            self.shield.health -=50
+
+    def show_lifebar(self,screen):
+        lifebar=pygame.font.SysFont(myfont, 40, True).render(self.lifebar, 1, RED)
+        screen.blit(lifebar,(5,10))
+    
+    def activate_shield(self):
+        if self.shield.health == 200:
+            self.shield_activated = True 
+            self.shield.set_position(self.position)
         
-    def shoot(self):
-        self.sound.play()
+class Shield(Circle):
+    
+    def __init__(self, rotation, pull, angular_velocity):
+        self.timer = 0
+        self.position = []
+        self.rotation = rotation 
+        self.pull = pull
+        self.angular_velocity = angular_velocity
+        self.life = 3
+        self.health = 200 # max 200
+        self.radius =30
+        self.linewidth = 1
+        self.timer = 0 
         
+    def set_position(self, position):
+        self.position = position
+        
+    def draw(self, screen):
+        super().draw(screen)
+        pos = (int(self.position.x), int(self.position.y) )
+        pygame.draw.circle( screen, LIGHTBLUE, pos, self.radius, self.linewidth )

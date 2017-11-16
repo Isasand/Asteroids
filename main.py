@@ -1,7 +1,16 @@
-from asteroids import Asteroids 
+# -*- coding: utf-8 -*-
+"""
+Gruppuppgift: Asteroids - Objektorienterad Programmering
+Nackademin IOT 17
 
+Medverkande:
+Isa Sand
+Felix Edenborgh
+Christopher Bryant
 
-game = Asteroids( "Asteroids", 640, 480 )
-#game.start_screen()
-# Start the main game loop
-game.runGame()  
+Stomme källkod:
+Mark Dixon
+"""
+from asteroids import Asteroids
+game = Asteroids( "Asteroids", 800,600 )
+game.runGame() 

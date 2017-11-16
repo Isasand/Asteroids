@@ -1,14 +1,21 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Nov  6 17:21:08 2017
+Gruppuppgift: Asteroids - Objektorienterad Programmering
+Nackademin IOT 17
 
-@author: Isa
+Medverkande:
+Isa Sand
+Felix Edenborgh
+Christopher Bryant
+
+Stomme källkod:
+Mark Dixon
 """
 import pygame
 from pygame.locals import *
 
 pygame.font.init()
-DEFAULT_FONT = pygame.font.Font('freesansbold.ttf', 14)
+DEFAULT_FONT = pygame.font.SysFont('Consolas', 16)#.Font('Consolas.ttf', 14)
 
 BLACK     = (  0,   0,   0)
 WHITE     = (255, 255, 255)

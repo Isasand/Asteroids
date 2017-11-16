@@ -1,3 +1,17 @@
+# -*- coding: utf-8 -*-
+"""
+Gruppuppgift: Asteroids - Objektorienterad Programmering
+Nackademin IOT 17
+
+Medverkande:
+Isa Sand
+Felix Edenborgh
+Christopher Bryant
+
+Stomme källkod:
+Mark Dixon
+"""
+
 import sys
 import pygame
 from pygame.locals import *
@@ -36,7 +50,7 @@ class Game( ABC ):
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
-
+            self.handle_state()
             self.handle_input()
             self.update_simulation()
             self.paint()
@@ -55,7 +69,10 @@ class Game( ABC ):
 
     def update_simulation(self):
         self.frame += 1
-
+        
+    def handle_state(self):
+        pass
+        
     @abstractmethod
     def render_objects(self):
         pass
