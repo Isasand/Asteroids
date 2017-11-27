@@ -28,4 +28,4 @@ Examples from game:
 
 ![ScreenShot](https://raw.github.com/Isasand/Asteroids/master/playing.png)
 ![ScreenShot](https://raw.github.com/Isasand/Asteroids/master/gameover.png)
-
+![ScreenShot](https://raw.github.com/Isasand/Asteroids/master/highscore.png)
